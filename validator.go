@@ -1179,6 +1179,11 @@ func typeCheck(v reflect.Value, t reflect.StructField, o reflect.Value, options 
 				if err != nil {
 					return false, err
 				}
+
+				if strings.Contains(string(t.Tag), "objectId") {
+					return true, nil
+				}
+
 			} else {
 				resultItem, err = ValidateStruct(v.Index(i).Interface())
 				if err != nil {
@@ -1187,10 +1192,6 @@ func typeCheck(v reflect.Value, t reflect.StructField, o reflect.Value, options 
 				}
 			}
 			result = result && resultItem
-		}
-
-		if strings.Contains(string(t.Tag), "objectId") {
-			return true, nil
 		}
 
 		return result, nil
