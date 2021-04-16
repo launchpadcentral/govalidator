@@ -8,3 +8,10 @@ jobs:
       - checkout
       - run: go get -v -t -d ./...
       - run: go test -v ./...
+
+workflows:
+  version: 2
+  test-and-build:
+    jobs:
+      - build:
+          context: org-global
