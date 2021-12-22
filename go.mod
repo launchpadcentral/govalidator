@@ -1,3 +1,3 @@
-module github.com/asaskevich/govalidator
+module github.com/launchpadcentral/govalidator
 
 go 1.17
