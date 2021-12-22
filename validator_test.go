@@ -625,11 +625,91 @@ func TestIsHash(t *testing.T) {
 		{"46fc0125a148788a3ac1d649566fc04eb84a746f1a6e4fa7", "tiger192", true},
 		{"46fc0125a148788a3ac1d649566fc04eb84a746f1a6$$%@^", "TIGER192", false},
 		{"46fc0125a148788a3ac1d649566fc04eb84a746f1a6$$%@^", "SOMEHASH", false},
+		{"b87f88c72702fff1748e58b87e9141a42c0dbedc29a78cb0d4a5cd81", "sha3-224", true},
+		{"b87f88c72702fff1748e58b87e9141a42c0dbedc29a78cb0d4a5cd81g", "sha3-224", false},
+		{"3338be694f50c5f338814986cdf0686453a888b84f424d792af4b9202398f392", "sha3-256", true},
+		{"3338be694f50c5f338814986cdf0686453a888b84f424d792af4b9202398f392g", "sha3-256", false},
+		{"720aea11019ef06440fbf05d87aa24680a2153df3907b23631e7177ce620fa1330ff07c0fddee54699a4c3ee0ee9d887", "sha3-384", true},
+		{"720aea11019ef06440fbf05d87aa24680a2153df3907b23631e7177ce620fa1330ff07c0fddee54699a4c3ee0ee9d88", "sha3-384", false},
+		{"75d527c368f2efe848ecf6b073a36767800805e9eef2b1857d5f984f036eb6df891d75f72d9b154518c1cd58835286d1da9a38deba3de98b5a53e5ed78a84976", "sha3-512", true},
+		{"75d527c368f2efe848ecf6b073a36767800805e9eef2b1857d5f984f036eb6df891d75f72d9b154518c1cd58835286d1da9a38deba3de98b5a53e5ed78a8497", "sha3-512", false},
 	}
 	for _, test := range tests {
 		actual := IsHash(test.param, test.algo)
 		if actual != test.expected {
 			t.Errorf("Expected IsHash(%q, %q) to be %v, got %v", test.param, test.algo, test.expected, actual)
+		}
+	}
+}
+
+func TestIsSHA3224(t *testing.T) {
+	t.Parallel()
+
+	var tests = []struct {
+		param    string
+		expected bool
+	}{
+		{"b87f88c72702fff1748e58b87e9141a42c0dbedc29a78cb0d4a5cd81", true},
+		{"b87f88c72702fff1748e58b87e9141a42c0dbedc29a78cb0d4a5cd81g", false},
+	}
+	for _, test := range tests {
+		actual := IsSHA3224(test.param)
+		if actual != test.expected {
+			t.Errorf("Expected IsSHA3224(%q) to be %v, got %v", test.param, test.expected, actual)
+		}
+	}
+}
+
+func TestIsSHA3256(t *testing.T) {
+	t.Parallel()
+
+	var tests = []struct {
+		param    string
+		expected bool
+	}{
+		{"3338be694f50c5f338814986cdf0686453a888b84f424d792af4b9202398f392", true},
+		{"3338be694f50c5f338814986cdf0686453a888b84f424d792af4b9202398f39", false},
+	}
+	for _, test := range tests {
+		actual := IsSHA3256(test.param)
+		if actual != test.expected {
+			t.Errorf("Expected IsSHA3256(%q) to be %v, got %v", test.param, test.expected, actual)
+		}
+	}
+}
+
+func TestIsSHA3384(t *testing.T) {
+	t.Parallel()
+
+	var tests = []struct {
+		param    string
+		expected bool
+	}{
+		{"720aea11019ef06440fbf05d87aa24680a2153df3907b23631e7177ce620fa1330ff07c0fddee54699a4c3ee0ee9d887", true},
+		{"720aea11019ef06440fbf05d87aa24680a2153df3907b23631e7177ce620fa1330ff07c0fddee54699a4c3ee0ee9d88", false},
+	}
+	for _, test := range tests {
+		actual := IsSHA3384(test.param)
+		if actual != test.expected {
+			t.Errorf("Expected IsSHA3384(%q) to be %v, got %v", test.param, test.expected, actual)
+		}
+	}
+}
+
+func TestIsSHA3512(t *testing.T) {
+	t.Parallel()
+
+	var tests = []struct {
+		param    string
+		expected bool
+	}{
+		{"75d527c368f2efe848ecf6b073a36767800805e9eef2b1857d5f984f036eb6df891d75f72d9b154518c1cd58835286d1da9a38deba3de98b5a53e5ed78a84976", true},
+		{"75d527c368f2efe848ecf6b073a36767800805e9eef2b1857d5f984f036eb6df891d75f72d9b154518c1cd58835286d1da9a38deba3de98b5a53e5ed78a8497", false},
+	}
+	for _, test := range tests {
+		actual := IsSHA3512(test.param)
+		if actual != test.expected {
+			t.Errorf("Expected IsSHA3512(%q) to be %v, got %v", test.param, test.expected, actual)
 		}
 	}
 }
@@ -645,13 +725,16 @@ func TestIsExistingEmail(t *testing.T) {
 		{"foo@bar.com", true},
 		{"foo@bar.com.au", true},
 		{"foo+bar@bar.com", true},
-		{"foo@bar.coffee", false},
 		{"foo@bar.coffee..coffee", false},
 		{"invalidemail@", false},
 		{"invalid.com", false},
 		{"@invalid.com", false},
 		{"NathAn.daVIeS@DomaIn.cOM", true},
 		{"NATHAN.DAVIES@DOMAIN.CO.UK", true},
+		{"prasun.joshi@localhost", true},
+		{"[prasun.joshi]@DomaIn.cOM", false},
+		{"sizeofuserismorethansixtyfour0123sizeofuserismorethansixtyfour0123@DOMAIN.CO.UK", false},
+		{"nosuchdomain@bar.nosuchdomainsuffix", false},
 	}
 	for _, test := range tests {
 		actual := IsExistingEmail(test.param)
@@ -1019,6 +1102,42 @@ func TestIsNull(t *testing.T) {
 	}
 }
 
+func TestIsNotNull(t *testing.T) {
+	t.Parallel()
+
+	var tests = []struct {
+		param    string
+		expected bool
+	}{
+		{"abacaba", true},
+		{"", false},
+	}
+	for _, test := range tests {
+		actual := IsNotNull(test.param)
+		if actual != test.expected {
+			t.Errorf("Expected IsNull(%q) to be %v, got %v", test.param, test.expected, actual)
+		}
+	}
+}
+
+func TestIsIMEI(t *testing.T) {
+	tests := []struct {
+		param    string
+		expected bool
+	}{
+		{"990000862471854", true},
+		{"351756051523999", true},
+		{"9900008624718541", false},
+		{"1", false},
+	}
+	for _, test := range tests {
+		actual := IsIMEI(test.param)
+		if actual != test.expected {
+			t.Errorf("Expected IsIMEI(%q) to be %v, got %v", test.param, test.expected, actual)
+		}
+	}
+}
+
 func TestHasWhitespaceOnly(t *testing.T) {
 	t.Parallel()
 
@@ -1382,7 +1501,7 @@ func TestIsUUID(t *testing.T) {
 	}
 }
 
-func TestIsCreditCard(t *testing.T) {
+func TestIsULID(t *testing.T) {
 	t.Parallel()
 
 	var tests = []struct {
@@ -1390,20 +1509,69 @@ func TestIsCreditCard(t *testing.T) {
 		expected bool
 	}{
 		{"", false},
-		{"foo", false},
-		{"5398228707871528", false},
-		{"375556917985515", true},
-		{"36050234196908", true},
-		{"4716461583322103", true},
-		{"4716-2210-5188-5662", true},
-		{"4929 7226 5379 7141", true},
-		{"5398228707871527", true},
+		{"xxxa987fbc9-4bed-3078-cf07-9141ba07c9f3", false},
+		{"a987fbc9-4bed-3078-cf07-9141ba07c9f3xxx", false},
+		{"a987fbc94bed3078cf079141ba07c9f3", false},
+		{"934859", false},
+		{"987fbc9-4bed-3078-cf07a-9141ba07c9f3", false},
+		{"aaaaaaaa-1111-1111-aaag-111111111111", false},
+		{"0000000000zzzzzzzzzzzzzzzz", true},
+		{"0123456789zzzzzzzzzzzzzzzz", true},
+		{"0123456789abcdefghjkmnpqrs", true},
+		{"7zzzzzzzzzaaaaaaaaaaaaaaaa", true},
+		{"7zanmkqfpyaaaaaaaaaaaaaaaa", true},
+		{"7zanmkqfpyaaaaaaaaaaAAAAAA", true},
+		{"8000000000zzzzzzzzzzzzzzzz", false},
+		{"8000000001zzzzzzzzzzzzzzzz", false},
+		{"8123456789zzzzzzzzzzzzzzzz", false},
+		{"8123456789zzzzzzzzzzzzzzzL", false},
+		{"8123456789zzzzzzzzzzzzzzzO", false},
+		{"8123456789zzzzzzzzzzzzzzzu", false},
+		{"8123456789zzzzzzzzzzzzzzzI", false},
 	}
 	for _, test := range tests {
-		actual := IsCreditCard(test.param)
-		if actual != test.expected {
-			t.Errorf("Expected IsCreditCard(%q) to be %v, got %v", test.param, test.expected, actual)
-		}
+		tc := test
+		t.Run(fmt.Sprintf("%26.26s", tc.param), func(t *testing.T) {
+			actual := IsULID(tc.param)
+			if actual != tc.expected {
+				t.Errorf("Expected IsULID(%q) to be %v, got %v", tc.param, tc.expected, actual)
+			}
+		})
+	}
+}
+
+func TestIsCreditCard(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		name   string
+		number string
+		want   bool
+	}{
+		{"empty", "", false},
+		{"not numbers", "credit card", false},
+		{"invalid luhn algorithm", "4220855426213389", false},
+
+		{"visa", "4220855426222389", true},
+		{"visa spaces", "4220 8554 2622 2389", true},
+		{"visa dashes", "4220-8554-2622-2389", true},
+		{"mastercard", "5139288802098206", true},
+		{"american express", "374953669708156", true},
+		{"discover", "6011464355444102", true},
+		{"jcb", "3548209662790989", true},
+
+		// below should be valid, do they respect international standards?
+		// is our validator logic not correct?
+		{"diners club international", "30190239451016", false},
+		{"rupay", "6521674451993089", false},
+		{"mir", "2204151414444676", false},
+		{"china unionPay", "624356436327468104", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsCreditCard(tt.number); got != tt.want {
+				t.Errorf("IsCreditCard(%v) = %v, want %v", tt.number, got, tt.want)
+			}
+		})
 	}
 }
 
@@ -1503,6 +1671,41 @@ func TestIsDataURI(t *testing.T) {
 		actual := IsDataURI(test.param)
 		if actual != test.expected {
 			t.Errorf("Expected IsDataURI(%q) to be %v, got %v", test.param, test.expected, actual)
+		}
+	}
+}
+
+func TestIsMagnetURI(t *testing.T) {
+	t.Parallel()
+
+	var tests = []struct {
+		param    string
+		expected bool
+	}{
+		{"magnet:?xt=urn:btih:06E2A9683BF4DA92C73A661AC56F0ECC9C63C5B4&dn=helloword2000&tr=udp://helloworld:1337/announce", true},
+		{"magnet:?xt=urn:btih:3E30322D5BFC7444B7B1D8DD42404B75D0531DFB&dn=world&tr=udp://world.com:1337", true},
+		{"magnet:?xt=urn:btih:4ODKSDJBVMSDSNJVBCBFYFBKNRU875DW8D97DWC6&dn=helloworld&tr=udp://helloworld.com:1337", true},
+		{"magnet:?xt=urn:btih:1GSHJVBDVDVJFYEHKFHEFIO8573898434JBFEGHD&dn=foo&tr=udp://foo.com:1337", true},
+		{"magnet:?xt=urn:btih:MCJDCYUFHEUD6E2752T7UJNEKHSUGEJFGTFHVBJS&dn=bar&tr=udp://bar.com:1337", true},
+		{"magnet:?xt=urn:btih:LAKDHWDHEBFRFVUFJENBYYTEUY837562JH2GEFYH&dn=foobar&tr=udp://foobar.com:1337", true},
+		{"magnet:?xt=urn:btih:MKCJBHCBJDCU725TGEB3Y6RE8EJ2U267UNJFGUID&dn=test&tr=udp://test.com:1337", true},
+		{"magnet:?xt=urn:btih:UHWY2892JNEJ2GTEYOMDNU67E8ICGICYE92JDUGH&dn=baz&tr=udp://baz.com:1337", true},
+		{"magnet:?xt=urn:btih:HS263FG8U3GFIDHWD7829BYFCIXB78XIHG7CWCUG&dn=foz&tr=udp://foz.com:1337", true},
+		{"", false},
+		{":?xt=urn:btih:06E2A9683BF4DA92C73A661AC56F0ECC9C63C5B4&dn=helloword2000&tr=udp://helloworld:1337/announce", false},
+		{"magnett:?xt=urn:btih:3E30322D5BFC7444B7B1D8DD42404B75D0531DFB&dn=world&tr=udp://world.com:1337", false},
+		{"xt=urn:btih:4ODKSDJBVMSDSNJVBCBFYFBKNRU875DW8D97DWC6&dn=helloworld&tr=udp://helloworld.com:1337", false},
+		{"magneta:?xt=urn:btih:1GSHJVBDVDVJFYEHKFHEFIO8573898434JBFEGHD&dn=foo&tr=udp://foo.com:1337", false},
+		{"magnet:?xt=uarn:btih:MCJDCYUFHEUD6E2752T7UJNEKHSUGEJFGTFHVBJS&dn=bar&tr=udp://bar.com:1337", false},
+		{"magnet:?xt=urn:btihz&dn=foobar&tr=udp://foobar.com:1337", false},
+		{"magnet:?xat=urn:btih:MKCJBHCBJDCU725TGEB3Y6RE8EJ2U267UNJFGUID&dn=test&tr=udp://test.com:1337", false},
+		{"magnet::?xt=urn:btih:UHWY2892JNEJ2GTEYOMDNU67E8ICGICYE92JDUGH&dn=baz&tr=udp://baz.com:1337", false},
+		{"magnet:?xt:btih:HS263FG8U3GFIDHWD7829BYFCIXB78XIHG7CWCUG&dn=foz&tr=udp://foz.com:1337", false},
+	}
+	for _, test := range tests {
+		actual := IsMagnetURI(test.param)
+		if actual != test.expected {
+			t.Errorf("Expected IsMagnetURI(%q) to be %v, got %v", test.param, test.expected, actual)
 		}
 	}
 }
@@ -1892,6 +2095,69 @@ func TestFilePath(t *testing.T) {
 	}
 }
 
+func TestIsWinFilePath(t *testing.T) {
+	t.Parallel()
+
+	var tests = []struct {
+		param    string
+		expected bool
+	}{
+		{"c:\\" + strings.Repeat("a", 32767), true}, //See http://msdn.microsoft.com/en-us/library/aa365247(VS.85).aspx#maxpath
+		{"c:\\" + strings.Repeat("a", 32768), false},
+		{"c:\\path\\file (x86)\\bar", true},
+		{"c:\\path\\file", true},
+		{"c:\\path\\file:exe", false},
+		{"C:\\", true},
+		{"c:\\path\\file\\", true},
+		{"..\\path\\file\\", true},
+		{"c:/path/file/", false},
+		{"a bc", true},
+		{"abc.jd", true},
+		{"abc.jd:$#%# dsd", false},
+	}
+	for _, test := range tests {
+		actual := IsWinFilePath(test.param)
+		if actual != test.expected {
+			t.Errorf("Expected IsWinFilePath(%q) to be %v, got %v", test.param, test.expected, actual)
+		}
+	}
+}
+
+func TestIsUnixFilePath(t *testing.T) {
+	t.Parallel()
+
+	var tests = []struct {
+		param    string
+		expected bool
+	}{
+		{"c:/path/file/", true},    //relative path
+		{"../path/file/", true},    //relative path
+		{"../../path/file/", true}, //relative path
+		{"./path/file/", true},     //relative path
+		{"./file.dghdg", true},     //relative path
+		{"/path/file/", true},
+		{"/path/file:SAMPLE/", true},
+		{"/path/file:/.txt", true},
+		{"/path", true},
+		{"/path/__bc/file.txt", true},
+		{"/path/a--ac/file.txt", true},
+		{"/_path/file.txt", true},
+		{"/path/__bc/file.txt", true},
+		{"/path/a--ac/file.txt", true},
+		{"/__path/--file.txt", true},
+		{"/path/a bc", true},
+		{"a bc", true},
+		{"abc.jd", true},
+		{"abc.jd:$#%# dsd", true},
+	}
+	for _, test := range tests {
+		actual := IsUnixFilePath(test.param)
+		if actual != test.expected {
+			t.Errorf("Expected IsUnixFilePath(%q) to be %v, got %v", test.param, test.expected, actual)
+		}
+	}
+}
+
 func TestIsLatitude(t *testing.T) {
 	t.Parallel()
 
@@ -2031,13 +2297,13 @@ func TestIsTime(t *testing.T) {
 		{"2016-12-31T11:00:00.05Z", time.RFC3339, true},
 		{"2016-12-31T11:00:00.05-01:00", time.RFC3339, true},
 		{"2016-12-31T11:00:00.05+01:00", time.RFC3339, true},
-		{"2016-12-31T11:00:00", RF3339WithoutZone, true},
-		{"2016-12-31T11:00:00Z", RF3339WithoutZone, false},
-		{"2016-12-31T11:00:00+01:00", RF3339WithoutZone, false},
-		{"2016-12-31T11:00:00-01:00", RF3339WithoutZone, false},
-		{"2016-12-31T11:00:00.05Z", RF3339WithoutZone, false},
-		{"2016-12-31T11:00:00.05-01:00", RF3339WithoutZone, false},
-		{"2016-12-31T11:00:00.05+01:00", RF3339WithoutZone, false},
+		{"2016-12-31T11:00:00", rfc3339WithoutZone, true},
+		{"2016-12-31T11:00:00Z", rfc3339WithoutZone, false},
+		{"2016-12-31T11:00:00+01:00", rfc3339WithoutZone, false},
+		{"2016-12-31T11:00:00-01:00", rfc3339WithoutZone, false},
+		{"2016-12-31T11:00:00.05Z", rfc3339WithoutZone, false},
+		{"2016-12-31T11:00:00.05-01:00", rfc3339WithoutZone, false},
+		{"2016-12-31T11:00:00.05+01:00", rfc3339WithoutZone, false},
 	}
 	for _, test := range tests {
 		actual := IsTime(test.param, test.format)
@@ -2463,7 +2729,7 @@ func TestStructWithCustomByteArray(t *testing.T) {
 
 		switch v := i.(type) {
 		case CustomByteArray:
-			for _, e := range v { // check if v is empty, i.e. all zeroes
+			for _, e := range v { // checks if v is empty, i.e. all zeroes
 				if e != 0 {
 					return true
 				}
@@ -2751,7 +3017,7 @@ func TestNestedStruct(t *testing.T) {
 			Nested: NestedStruct{
 				Foo: "123",
 				SliceEvenMoreNested: []EvenMoreNestedStruct{
-					EvenMoreNestedStruct{
+					{
 						Bar: "123456",
 					},
 				},
@@ -2761,7 +3027,7 @@ func TestNestedStruct(t *testing.T) {
 			Nested: NestedStruct{
 				Foo: "123",
 				MapEvenMoreNested: map[string]EvenMoreNestedStruct{
-					"Foo": EvenMoreNestedStruct{
+					"Foo": {
 						Bar: "123456",
 					},
 				},
@@ -3405,7 +3671,7 @@ func TestValidatorIncludedInError(t *testing.T) {
 		}
 	}
 
-	// check to make sure that validators with arguments (like length(1|10)) don't include the arguments
+	// checks to make sure that validators with arguments (like length(1|10)) don't include the arguments
 	// in the validator name
 	message := MessageWithSeveralFieldsStruct{
 		Title: "",
@@ -3485,6 +3751,117 @@ bQIDAQAB
 		actual := IsRsaPublicKey(test.rsastr, test.keylen)
 		if actual != test.expected {
 			t.Errorf("Expected TestIsRsaPublicKey(%d, %d) to be %v, got %v", i, test.keylen, test.expected, actual)
+		}
+	}
+}
+
+func TestIsRegex(t *testing.T) {
+	t.Parallel()
+
+	var tests = []struct {
+		param    string
+		expected bool
+	}{
+		{"^$", true},
+		{"$^", true},
+		{"^^", true},
+		{"$$", true},
+		{"a+", true},
+		{"a++", false},
+		{"a*", true},
+		{"a**", false},
+		{"a+*", false},
+		{"a*+", false},
+		{"[a+]+", true},
+		{"\\w+", true},
+		{"\\y+", false},
+		{"[asdf][qwer]", true},
+		{"[asdf[", false},
+		{"[asdf[]", true},
+		{"[asdf[][]", false},
+		{"(group2)(group3)", true},
+		{"(invalid_paranthesis(asdf)", false},
+		{"a?", true},
+		{"a??", true},
+		{"a???", false},
+		{"a\\???", true},
+		{"asdf\\/", true},
+		{"asdf/", true},
+		{"\\x61", true},
+		{"\\xg1", false},
+		{"\\x6h", false},
+		{"[asdf[", false},
+		{"[A-z]+", true},
+		{"[z-A]+", false},
+		{"[a-z-A]", true},
+		{"a{3,6}", true},
+		{"a{6,3|3,6}", true},
+		{"a{6,3}", false},
+		{"a|b", true},
+		{"a|b|", true},
+		{"a|b||", true}, //But false in python RE
+		{"(?:)", true},
+		{"(?)", true}, //But false in python RE
+		{"?", false},
+		{"(?::?)", true},
+		{"(?:?)", false},
+		{"(()?)", true},
+		{"(?:?)", false},
+		{"(A conditional matching)? (?(1)matched|not matched)", false}, //But true in python RE
+		{"(A conditional matching)? (?(2)matched|not matched)", false},
+		{"(?:A conditional matching)? (?(1)matched|not matched)", false},
+		{"(?:[a-z]+)?", true},
+		{"(?#[a-z]+)?", false},
+		{"(?P<name>[a-z]+)", true},
+		{"(?P<name<>>[a-z]+)", false},
+	}
+	for _, test := range tests {
+		actual := IsRegex(test.param)
+		if actual != test.expected {
+			t.Errorf("Expected IsNumeric(%q) to be %v, got %v", test.param, test.expected, actual)
+		}
+	}
+}
+
+func TestIsIMSI(t *testing.T) {
+	tests := []struct {
+		param    string
+		expected bool
+	}{
+		{"234150999999999", true},
+		{"429011234567890", true},
+		{"310150123456789", true},
+		{"460001234567890", true},
+		{"4600012345678", false},
+		{"4600012345678901", false},
+		{"462001234567890", false},
+		{"1", false},
+	}
+	for _, test := range tests {
+		actual := IsIMSI(test.param)
+		if actual != test.expected {
+			t.Errorf("Expected IsIMSI(%q) to be %v, got %v", test.param, test.expected, actual)
+		}
+	}
+}
+
+func TestIsE164(t *testing.T) {
+	t.Parallel()
+
+	var tests = []struct {
+		param    string
+		expected bool
+	}{
+		{"+14155552671", true},
+		{"+442071838750", true},
+		{"+551155256325", true},
+		{"+226071234567 ", false},
+		{"+06071234567 ", false},
+	}
+	for _, test := range tests {
+		actual := IsE164(test.param)
+		if actual != test.expected {
+			t.Errorf("Expected IsURL(%q) to be %v, got %v", test.param, test.expected, actual)
 		}
 	}
 }
