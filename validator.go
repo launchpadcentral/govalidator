@@ -69,6 +69,12 @@ func IsEmail(str string) bool {
 	return rxEmail.MatchString(str)
 }
 
+// lookupMX and lookupIP are variables so tests can stub DNS.
+var (
+	lookupMX = net.LookupMX
+	lookupIP = net.LookupIP
+)
+
 // IsExistingEmail check if the string is an email of existing domain
 func IsExistingEmail(email string) bool {
 
@@ -91,8 +97,8 @@ func IsExistingEmail(email string) bool {
 	case "localhost", "example.com":
 		return true
 	}
-	if _, err := net.LookupMX(host); err != nil {
-		if _, err := net.LookupIP(host); err != nil {
+	if _, err := lookupMX(host); err != nil {
+		if _, err := lookupIP(host); err != nil {
 			return false
 		}
 	}

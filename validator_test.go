@@ -2,6 +2,7 @@ package govalidator
 
 import (
 	"fmt"
+	"net"
 	"strings"
 	"testing"
 	"time"
@@ -635,7 +636,22 @@ func TestIsHash(t *testing.T) {
 }
 
 func TestIsExistingEmail(t *testing.T) {
-	t.Parallel()
+	origMX, origIP := lookupMX, lookupIP
+	t.Cleanup(func() { lookupMX, lookupIP = origMX, origIP })
+	notFound := &net.DNSError{Err: "no such host", IsNotFound: true}
+	lookupMX = func(host string) ([]*net.MX, error) {
+		switch strings.ToLower(host) {
+		case "bar.com", "bar.com.au", "bar.coffee", "domain.com", "domain.co.uk":
+			return []*net.MX{{Host: "mx." + host}}, nil
+		}
+		return nil, notFound
+	}
+	lookupIP = func(host string) ([]net.IP, error) {
+		if host == "ip-only.com" {
+			return []net.IP{net.IPv4(127, 0, 0, 1)}, nil
+		}
+		return nil, notFound
+	}
 
 	var tests = []struct {
 		param    string
@@ -652,6 +668,8 @@ func TestIsExistingEmail(t *testing.T) {
 		{"@invalid.com", false},
 		{"NathAn.daVIeS@DomaIn.cOM", true},
 		{"NATHAN.DAVIES@DOMAIN.CO.UK", true},
+		{"foo@ip-only.com", true},
+		{"foo@no-records.com", false},
 	}
 	for _, test := range tests {
 		actual := IsExistingEmail(test.param)
