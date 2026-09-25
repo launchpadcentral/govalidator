@@ -1114,7 +1114,7 @@ func TestIsByteLength(t *testing.T) {
 	for _, test := range tests {
 		actual := IsByteLength(test.param1, test.param2, test.param3)
 		if actual != test.expected {
-			t.Errorf("Expected IsByteLength(%q, %q, %q) to be %v, got %v", test.param1, test.param2, test.param3, test.expected, actual)
+			t.Errorf("Expected IsByteLength(%q, %d, %d) to be %v, got %v", test.param1, test.param2, test.param3, test.expected, actual)
 		}
 	}
 }
@@ -2492,9 +2492,9 @@ func TestStructWithCustomByteArray(t *testing.T) {
 	for _, test := range tests {
 		actual, err := ValidateStruct(test.param)
 		if actual != test.expected {
-			t.Errorf("Expected ValidateStruct(%q) to be %v, got %v", test.param, test.expected, actual)
+			t.Errorf("Expected ValidateStruct(%v) to be %v, got %v", test.param, test.expected, actual)
 			if err != nil {
-				t.Errorf("Got Error on ValidateStruct(%q): %s", test.param, err)
+				t.Errorf("Got Error on ValidateStruct(%v): %s", test.param, err)
 			}
 		}
 	}

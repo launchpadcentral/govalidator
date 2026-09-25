@@ -1,9 +1,11 @@
-version: 2
+version: 2.1
+orbs:
+  glidr-microservice-orb: launchpadcentral/glidr-microservice-orb@volatile
 jobs:
   build:
-    docker:
-      - image: circleci/golang:1.22.5
-    working_directory: /go/src/github.com/launchpadcentral/govalidator
+    executor:
+      name: glidr-microservice-orb/default
+      working_directory: /go/src/github.com/launchpadcentral/govalidator
     steps:
       - checkout
       - run: go get -v -t -d ./...

@@ -448,7 +448,7 @@ func TestPadLeft(t *testing.T) {
 	for _, test := range tests {
 		actual := PadLeft(test.param1, test.param2, test.param3)
 		if actual != test.expected {
-			t.Errorf("Expected PadLeft(%q,%q,%q) to be %v, got %v", test.param1, test.param2, test.param3, test.expected, actual)
+			t.Errorf("Expected PadLeft(%q,%q,%d) to be %v, got %v", test.param1, test.param2, test.param3, test.expected, actual)
 		}
 	}
 }
@@ -472,7 +472,7 @@ func TestPadRight(t *testing.T) {
 	for _, test := range tests {
 		actual := PadRight(test.param1, test.param2, test.param3)
 		if actual != test.expected {
-			t.Errorf("Expected PadRight(%q,%q,%q) to be %v, got %v", test.param1, test.param2, test.param3, test.expected, actual)
+			t.Errorf("Expected PadRight(%q,%q,%d) to be %v, got %v", test.param1, test.param2, test.param3, test.expected, actual)
 		}
 	}
 }
@@ -496,7 +496,7 @@ func TestPadBoth(t *testing.T) {
 	for _, test := range tests {
 		actual := PadBoth(test.param1, test.param2, test.param3)
 		if actual != test.expected {
-			t.Errorf("Expected PadBoth(%q,%q,%q) to be %v, got %v", test.param1, test.param2, test.param3, test.expected, actual)
+			t.Errorf("Expected PadBoth(%q,%q,%d) to be %v, got %v", test.param1, test.param2, test.param3, test.expected, actual)
 		}
 	}
 }
